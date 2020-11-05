@@ -1,5 +1,5 @@
 <mat-form-field class="full-width">
-    <input matInput [placeholder]="options.placeholder" >
+    <input matInput [placeholder]="options.placeholder" formControlName="Name">
 
     <mat-error *ngIf="options.isError">
       {{options.errorText}}

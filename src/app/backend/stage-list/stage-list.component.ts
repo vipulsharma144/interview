@@ -21,9 +21,9 @@ const DATA = [
 })
 export class StageListComponent implements OnInit {
 
-  displayedColumns: string[] = ['position', 'type', 'label','stage'];
-  dataSource = new MatTableDataSource(DATA);
-
+  displayedColumns: string[] = ['position', 'type', 'label','stage','stagename'];
+  dataSource;
+  stages;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   constructor(
@@ -33,10 +33,54 @@ export class StageListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.titleService.setTitle('angular-material-template - Customers');
+    
+    this.stages = [
+       
+        {
+          type:"text",
+          label:"Name",
+          position:1,
+          stage:1,
+          name:"First",
+          id:1,
+        },
+        {
+          type:"text",
+          label:"Surname",
+          position:2,
+          stage:1,
+          name:"First",
+          id:1,
+        },
+        {
+          type:"text",
+          label:"Class",
+          position:1,
+          stage:2,
+          name:"Second",
+          id:2,
+        },
+        {
+          type:"text",
+          label:"Section",
+          position:1,
+          stage:2,
+          name:"Second",
+          id:2,
+        }
+      
+  
+        
+    
+   
+        
+        
+        
+      ]
+      this.dataSource = new MatTableDataSource(this.stages);
+      this.titleService.setTitle('Stages');
     this.logger.log('Customers loaded');
     this.dataSource.sort = this.sort;
-
   }
 
 }

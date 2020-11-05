@@ -15,5 +15,7 @@ export class PhotoComponent implements OnInit {
   selectFile($ev){
 
   }
-
+  onRemove(f){
+    
+  }
 }

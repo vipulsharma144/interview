@@ -7,43 +7,57 @@
     <mat-step
       [stepControl]="stageGroup[i]"
       *ngFor="let items of stages; index as i"
-       
+      [editable]="isEditable"
     >
       <form [formGroup]="stageGroup[i]">
         <ng-template matStepLabel>{{ items.name }}</ng-template>
         <div *ngFor="let qstn of items.questions">
-          <app-text
-            [options]="{ placeholder: qstn.label }"
-            *ngIf="qstn.type == 'text'"
-          ></app-text>
-          <app-photo *ngIf="qstn.type == 'photo'"></app-photo>
-          <app-file *ngIf="qstn.type == 'file'"></app-file>
-          <app-code *ngIf="qstn.type == 'code'"></app-code>
+          
+
+          <mat-form-field class="full-width" *ngIf="qstn.type == 'text'">
+            <input matInput [placeholder]="qstn.label" [formControlName]="qstn.label">
+        
+            <mat-error *ngIf="qstn.isError && qstn.type == 'text'">
+              {{qstn.errorText}}
+            </mat-error>
+          </mat-form-field>
+
+
+          
+
+          <ngx-dropzone (change)="onPhotoSelect($event)" *ngIf="qstn.type == 'photo'" [ngStyle]="{ width: '60%', height: '100%' }" >
+            <ngx-dropzone-label>{{qstn.label}}</ngx-dropzone-label>
+            <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onPhotoRemove(f)">
+              <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+            </ngx-dropzone-preview>
+          </ngx-dropzone>
+
+          
+          <mat-form-field class="columns"  *ngIf="qstn.type == 'file'">
+            <mat-label *ngIf="selectedFiles; else newFile">{{selectedFiles.item(0).name}}</mat-label>
+            <ng-template #newFile>
+                <mat-label>{{qstn.label}}</mat-label>
+            </ng-template>
+            <input matInput disabled>
+            <button mat-icon-button matSuffix (click)="fileInput.click()">
+                <mat-icon>attach_file</mat-icon>
+            </button>
+            <input hidden (change)="selectFile($event)" #fileInput type="file" id="file">
+        </mat-form-field> 
+
+         
         </div>
 
         <div>
-          <button mat-button matStepperNext>Next</button>
+          <button mat-button matStepperNext (click)="saveData()">Next</button>
         </div>
       </form>
     </mat-step>
-    <!-- <mat-step [stepControl]="secondStageGroup" label="Fill out your address">
-      <form [formGroup]="secondStageGroup">
-        <mat-form-field>
-          <mat-label>Address</mat-label>
-          <input matInput formControlName="secondCtrl" placeholder="Ex. 1 Main St, New York, NY"
-                 required>
-        </mat-form-field>
-        <div>
-          <button mat-button matStepperPrevious>Back</button>
-          <button mat-button matStepperNext>Next</button>
-        </div>
-      </form>
-    </mat-step> -->
     <mat-step>
       <ng-template matStepLabel>Done</ng-template>
       <p>You are now done.</p>
       <div>
-        <button mat-button matStepperPrevious>Back</button>
+        
         <button mat-button (click)="stepper.reset()">Reset</button>
       </div>
     </mat-step>
