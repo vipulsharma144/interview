@@ -12,7 +12,7 @@ const appRoutes: Routes = [
     },
     {
         path: 'backend',
-        loadChildren: './customers/customers.module#CustomersModule',
+        loadChildren: './backend/backend.module#BackendModule',
         
     },
     {

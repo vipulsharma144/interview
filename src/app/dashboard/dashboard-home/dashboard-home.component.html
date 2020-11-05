@@ -1,42 +1,43 @@
 <div class="container" fxLayout="row" fxLayoutAlign="center none">
-
-  <div fxFlex="95%">
-    <div class="container" fxLayout="column" fxLayoutAlign="center center">
-
-      <h2>Stage 1!</h2>
-     
-    </div>
-
-    <div class="container" fxLayout="column" fxLayoutAlign="center none">
-
-      <mat-progress-bar mode="determinate" value=40></mat-progress-bar>
-     
-    </div>
-    
-    <div class="container" fxLayout="row" fxLayoutAlign="center none">
-      <mat-card>
-        <mat-card-content>
-          <h2>Question 1</h2>
-          
-          <form >
-            <p>Some other info needed </p>
-          
-            <div fxLayout="row">
-          
-              <div>
-          
-                <app-text [options]="textoptions"></app-text>
-                <button mat-raised-button color="primary" [disabled]="form.invalid || disableSubmit" (click)="nextStage()">Save and Next</button>
-          
-              </div>
-          
-            </div>
-          
-          </form>
-
-        </mat-card-content>
-      </mat-card>
-  
-    </div>
-  </div>
+  <mat-vertical-stepper [linear]="isLinear" [ngStyle]="{'width': '90%','height': '90%'}"  #stepper>
+    <mat-step [stepControl]="stageGroup[i]" *ngFor="let items of stages;index as i;">
+      <form [formGroup]="stageGroup[i]">
+        <ng-template matStepLabel>{{items.name}}</ng-template>
+        <div *ngFor="let qstn of items.questions">
+          <app-text [options]="{placeholder:qstn.label}" form *ngIf="qstn.type=='text'"></app-text>
+          <app-photo *ngIf="qstn.type=='photo'"></app-photo>
+          <app-file *ngIf="qstn.type=='file'"></app-file>
+          <app-code *ngIf="qstn.type=='code'"></app-code>
+        </div>
+        
+        
+        
+        <div>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <!-- <mat-step [stepControl]="secondStageGroup" label="Fill out your address">
+      <form [formGroup]="secondStageGroup">
+        <mat-form-field>
+          <mat-label>Address</mat-label>
+          <input matInput formControlName="secondCtrl" placeholder="Ex. 1 Main St, New York, NY"
+                 required>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step> -->
+    <mat-step>
+      <ng-template matStepLabel>Done</ng-template>
+      <p>You are now done.</p>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button (click)="stepper.reset()">Reset</button>
+      </div>
+    </mat-step>
+  </mat-vertical-stepper>
+ 
 </div>

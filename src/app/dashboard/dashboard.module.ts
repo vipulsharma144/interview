@@ -9,14 +9,22 @@ import { TextComponent } from './inputs/text/text.component';
 import { PhotoComponent } from './inputs/photo/photo.component';
 import { VideoComponent } from './inputs/video/video.component';
 import { CodeComponent } from './inputs/code/code.component'
+import { NgxDropzoneModule } from 'ngx-dropzone';
+import { FileComponent } from './inputs/file/file.component';
+import {MatStepperModule} from '@angular/material/stepper';
+
 @NgModule({
-  declarations: [DashboardHomeComponent, TextComponent, PhotoComponent, VideoComponent, CodeComponent],
+  declarations: [DashboardHomeComponent, TextComponent, PhotoComponent, VideoComponent, CodeComponent, FileComponent],
   imports: [
     CommonModule,
     DashboardRoutingModule,
     SharedModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    NgxDropzoneModule,
+    MatStepperModule
+    
+    
   ],
-  entryComponents: []
+  entryComponents: [TextComponent, PhotoComponent, VideoComponent, CodeComponent]
 })
 export class DashboardModule { }

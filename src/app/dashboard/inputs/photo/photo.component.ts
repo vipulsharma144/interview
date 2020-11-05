@@ -6,10 +6,14 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./photo.component.css']
 })
 export class PhotoComponent implements OnInit {
-
+  selectedFiles;
   constructor() { }
 
   ngOnInit() {
+  }
+
+  selectFile($ev){
+
   }
 
 }

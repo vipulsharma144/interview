@@ -9,10 +9,15 @@ import { CustomMaterialModule } from './custom-material/custom-material.module';
 import { AppRoutingModule } from './app-routing.module';
 import { LoggerModule } from 'ngx-logger';
 import { environment } from '../environments/environment';
+import { BackendModule } from './backend/backend.module';
+import { NgxDropzoneModule } from 'ngx-dropzone';
+
+
 
 @NgModule({
   declarations: [
     AppComponent
+    
   ],
   imports: [
     BrowserModule,
@@ -21,6 +26,9 @@ import { environment } from '../environments/environment';
     SharedModule,
     CustomMaterialModule.forRoot(),
     AppRoutingModule,
+    BackendModule,
+    NgxDropzoneModule,
+ 
     LoggerModule.forRoot({
       serverLoggingUrl: `http://my-api/logs`,
       level: environment.logLevel,
