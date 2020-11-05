@@ -1,17 +1,26 @@
 <div class="container" fxLayout="row" fxLayoutAlign="center none">
-  <mat-vertical-stepper [linear]="isLinear" [ngStyle]="{'width': '90%','height': '90%'}"  #stepper>
-    <mat-step [stepControl]="stageGroup[i]" *ngFor="let items of stages;index as i;">
+  <mat-vertical-stepper
+    [linear]="isLinear"
+    [ngStyle]="{ width: '90%', height: '90%' }"
+    #stepper
+  >
+    <mat-step
+      [stepControl]="stageGroup[i]"
+      *ngFor="let items of stages; index as i"
+       
+    >
       <form [formGroup]="stageGroup[i]">
-        <ng-template matStepLabel>{{items.name}}</ng-template>
+        <ng-template matStepLabel>{{ items.name }}</ng-template>
         <div *ngFor="let qstn of items.questions">
-          <app-text [options]="{placeholder:qstn.label}" form *ngIf="qstn.type=='text'"></app-text>
-          <app-photo *ngIf="qstn.type=='photo'"></app-photo>
-          <app-file *ngIf="qstn.type=='file'"></app-file>
-          <app-code *ngIf="qstn.type=='code'"></app-code>
+          <app-text
+            [options]="{ placeholder: qstn.label }"
+            *ngIf="qstn.type == 'text'"
+          ></app-text>
+          <app-photo *ngIf="qstn.type == 'photo'"></app-photo>
+          <app-file *ngIf="qstn.type == 'file'"></app-file>
+          <app-code *ngIf="qstn.type == 'code'"></app-code>
         </div>
-        
-        
-        
+
         <div>
           <button mat-button matStepperNext>Next</button>
         </div>
@@ -39,5 +48,4 @@
       </div>
     </mat-step>
   </mat-vertical-stepper>
- 
 </div>
