@@ -1,4 +1,10 @@
-import { Component, OnInit } from "@angular/core";
+import {
+  AfterViewChecked,
+  AfterViewInit,
+  Component,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 import { NotificationService } from "src/app/core/services/notification.service";
 import { Title } from "@angular/platform-browser";
 import { NGXLogger } from "ngx-logger";
@@ -9,94 +15,93 @@ import {
   FormGroup,
   Validators,
 } from "@angular/forms";
+import { MatStepper } from "@angular/material";
+import { unescapeIdentifier } from '@angular/compiler';
 
 @Component({
   selector: "app-dashboard-home",
   templateUrl: "./dashboard-home.component.html",
   styleUrls: ["./dashboard-home.component.css"],
 })
-export class DashboardHomeComponent implements OnInit {
+export class DashboardHomeComponent implements OnInit, AfterViewInit {
   currentUser: any;
   form: FormGroup;
   disableSubmit;
-  isLinear = true;
-  stages;
+  isLinear = false;
+  stages=[] ;
   stageGroup = [];
   stageStatus = [];
-  files =[];
+  files = [];
+  selectedFiles = [];
+  savedProgress = [];
+  stepperCompleted = []; //true false array to check if the step is completed ot not
   isEditable = false; //to prevent going back in step
-  textoptions = {
-    placeholder: "Enter Name",
-    formControlName: "currentName",
-    isError: false,
-    errorText: "Enter correct Name",
-  };
-  firstStageGroup: FormGroup;
-  secondStageGroup: FormGroup;
+  isApplicationSubmitted;
+  totalStages;
 
+  @ViewChild("stepper", { static: false }) mainStepper: MatStepper;
   constructor(
     private notificationService: NotificationService,
     private authService: AuthenticationService,
     private titleService: Title,
     private logger: NGXLogger
   ) {}
-
+  checkIfApplicationSubmitted(){
+    var status = localStorage.getItem("applicationSubmitted");
+    
+    if (status === "true"){
+      
+      alert("Application already submitted")
+      this.isApplicationSubmitted = true
+    }else{
+      this.isApplicationSubmitted = false
+    }
+  }
   ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
-    this.titleService.setTitle("angular-material-template - Dashboard");
-    this.logger.log("Dashboard loaded");
+    this.titleService.setTitle("Interview");
+    
+    this.totalStages = parseInt(localStorage.getItem("totalstages"));
+    
+    
+    var savedValues = JSON.parse(localStorage.getItem("stageValue"))
+    if(savedValues != undefined && savedValues != null){
+        this.savedProgress = savedValues
+    }
 
-    this.form = new FormGroup({
-      currentName: new FormControl("", Validators.required),
-    });
-
-    this.secondStageGroup = new FormGroup({
-      secondCtrl: new FormControl("", Validators.required),
-    });
     this.getConfiguredStages();
+    this.checkIfApplicationSubmitted()
+  }
+  ngAfterViewInit() {
+    this.checkCurrentProgress();
+    
   }
   nextStage() {}
 
   getConfiguredStages() {
-    this.stages = [
-      {
-        name: "First",
-        id: 1,
-        questions: [
-          {
-            type: "text",
-            label: "Name",
-            position: 1,
-            stage: 1,
-          },
-          {
-            type: "text",
-            label: "Surname",
-            position: 2,
-            stage: 1,
-          },
-        ],
-      },
 
-      {
-        name: "Second",
-        id: 2,
-        questions: [
+    var groupBy = function(xs, key) {
+      return xs.reduce(function(rv, x) {
+        (rv[x[key]] = rv[x[key]] || []).push(x);
+        return rv;
+      }, {});
+    };
+
+    var qstns = JSON.parse(localStorage.getItem("stagesQustions"))
+    if(qstns!= null && qstns != undefined){
+     var temp = groupBy(qstns,["stage"])
+     Object.keys(temp).forEach(stageID => {
+        this.stages.push(
           {
-            type: "text",
-            label: "Class",
-            position: 1,
-            stage: 2,
-          },
-          {
-            type: "text",
-            label: "Section",
-            position: 1,
-            stage: 2,
-          },
-        ],
-      },
-    ];
+            name: temp[stageID][0].name,
+            id:stageID,
+            questions:temp[stageID]
+          }
+        )
+     });
+       
+    }
+    
 
     this.stages.forEach((stage, i) => {
       var data = {};
@@ -107,19 +112,73 @@ export class DashboardHomeComponent implements OnInit {
       this.stageGroup[i] = new FormGroup(data);
       this.stageStatus[i] = false;
     });
-    console.log(this.stageGroup);
+    
 
     return this.stages;
   }
 
-  saveData() {
-    this.stageStatus[0] = true;
-    console.log( this.stageGroup)
+  saveData(stage) {
+    
+    var values = this.stageGroup[stage].getRawValue();
+    
+    if(this.stageGroup[stage].valid){
+      this.mainStepper.next()
+      this.savedProgress[stage] = values;
+      localStorage.setItem("stageValue", JSON.stringify(this.savedProgress));
+     
+     
   }
-  onPhotoSelect(event){
+
+ 
+    
+  }
+
+  submitApplication() {
+    localStorage.setItem("applicationSubmitted", "true");
+    this.isApplicationSubmitted=true;
+  }
+  onPhotoSelect(event) {
     //this.files.push(...event.addedFiles);
   }
-  onPhotoRemove(event){
+  onPhotoRemove(event) {
     //this.files.splice(this.files.indexOf(event), 1);
   }
+  selectFile(e) {}
+
+  resetForm() {
+    localStorage.removeItem("stageValue");
+    
+    this.mainStepper.reset();
+    this.savedProgress = [];
+  }
+
+  checkCurrentProgress() {
+    
+    
+    if (this.savedProgress === undefined || this.savedProgress === null || this.isApplicationSubmitted) {
+      return;
+    }else{
+      if (this.savedProgress.length < this.totalStages) {
+        this.mainStepper.selectedIndex = this.savedProgress.length;
+      }
+      this.savedProgress.forEach((v, i) => {
+        Object.keys(v).forEach((field, j) => {
+          this.stageGroup[i].controls[field].setValue(v[field]);
+          
+          
+          if (v[field] != "" && v[field] != null && this.stepperCompleted[i] != false) {
+            this.stepperCompleted[i] = true;
+          } else {
+            this.stepperCompleted[i] = false;
+            
+            
+            this.mainStepper.previous();
+          }
+        });
+      });
+    }
+
+    
+  }
+
 }

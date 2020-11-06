@@ -3,11 +3,14 @@
     [linear]="isLinear"
     [ngStyle]="{ width: '90%', height: '90%' }"
     #stepper
+    *ngIf="!isApplicationSubmitted"
   >
     <mat-step
       [stepControl]="stageGroup[i]"
       *ngFor="let items of stages; index as i"
       [editable]="isEditable"
+      [completed]="stepperCompleted[i] !=undefined ? stepperCompleted[i] : false "
+    
     >
       <form [formGroup]="stageGroup[i]">
         <ng-template matStepLabel>{{ items.name }}</ng-template>
@@ -15,7 +18,7 @@
           
 
           <mat-form-field class="full-width" *ngIf="qstn.type == 'text'">
-            <input matInput [placeholder]="qstn.label" [formControlName]="qstn.label">
+            <input matInput [placeholder]="qstn.label" [formControlName]="qstn.label" required >
         
             <mat-error *ngIf="qstn.isError && qstn.type == 'text'">
               {{qstn.errorText}}
@@ -34,7 +37,7 @@
 
           
           <mat-form-field class="columns"  *ngIf="qstn.type == 'file'">
-            <mat-label *ngIf="selectedFiles; else newFile">{{selectedFiles.item(0).name}}</mat-label>
+            <mat-label *ngIf="selectedFiles; else newFile">{{selectedFiles[0].name}}</mat-label>
             <ng-template #newFile>
                 <mat-label>{{qstn.label}}</mat-label>
             </ng-template>
@@ -49,17 +52,23 @@
         </div>
 
         <div>
-          <button mat-button matStepperNext (click)="saveData()">Next</button>
+          <button mat-button  (click)="saveData(i)">Save and Next</button>
         </div>
       </form>
     </mat-step>
     <mat-step>
       <ng-template matStepLabel>Done</ng-template>
-      <p>You are now done.</p>
+      <p>You are now done.Click on submit to submit application</p>
       <div>
-        <button mat-button (click)="stepper.submit()">Submit</button>
-        <button mat-button (click)="stepper.reset()">Reset</button>
+        <button mat-button (click)="submitApplication()">Submit</button>
+        <button mat-button (click)="resetForm()">Reset</button>
       </div>
     </mat-step>
   </mat-vertical-stepper>
+
+ 
+  <div *ngIf="isApplicationSubmitted" fxLayout="row" fxLayoutAlign="space-around center" >
+    <h2>Application submitted</h2>
+  </div>
+  
 </div>

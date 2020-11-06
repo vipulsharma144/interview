@@ -4,10 +4,25 @@
       <mat-card>
         <mat-card-content>
           <h2>Stages List</h2>
-          <a [routerLink]="['/backend/add-stage']">
-            <mat-icon >playlist_add</mat-icon>
-          </a>
+          <div>
           
+          <div class="tooltip">
+            <a [routerLink]="['/backend/add-stage']">
+              <mat-icon >playlist_add</mat-icon>
+            </a>
+            
+            <span class="tooltiptext">Click to Add new stages</span>
+          </div>
+
+          <div class="tooltip">
+            <a (click)="setStages()">
+              <mat-icon >cached</mat-icon>
+            </a>
+            
+            <span class="tooltiptext">Click to Add dummy stages</span>
+          </div>
+        </div>
+        
           <table mat-table [dataSource]="dataSource" matSort>
   
          
