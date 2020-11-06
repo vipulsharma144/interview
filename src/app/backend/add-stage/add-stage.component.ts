@@ -9,6 +9,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 export class AddStageComponent implements OnInit {
   form:FormGroup
   types = ["text","photo","video","code"]
+  totalstage;
   constructor() { }
 
   ngOnInit() {
@@ -20,6 +21,7 @@ export class AddStageComponent implements OnInit {
       name: new FormControl('', Validators.required),
      
     });
+    this.totalstage = localStorage.getItem("totalstages")
   }
 
   save(){
@@ -32,5 +34,9 @@ export class AddStageComponent implements OnInit {
       this.form.reset()
     }
   }
-
+  saveTotalStage(){
+    
+    localStorage.setItem("totalstages",this.totalstage)
+    alert("New Stage Set")
+  }
 }

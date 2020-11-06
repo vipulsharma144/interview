@@ -9,7 +9,7 @@
   
    
       
-      <div class="container" fxLayout="row" fxLayoutAlign="center center">
+      <div class="container" fxLayout="row" fxLayoutAlign="space-around none">
         <mat-card>
           <mat-card-content>
             
@@ -61,7 +61,7 @@
 
              
                     
-                  <button mat-raised-button color="primary" (click)="save()">Save and Next</button>
+                  <button mat-raised-button color="primary" (click)="save()">Create New Question</button>
             
                 </div>
             
@@ -69,9 +69,23 @@
             
             </form>
   
+            
           </mat-card-content>
         </mat-card>
     
+        <mat-card>
+          <mat-card-content>
+            <div fxLayout="column" fxLayoutAlign="center center">
+              <mat-form-field >
+  
+                <mat-label>Total Stages</mat-label>
+                <input matInput type="number"  [(ngModel)]="totalstage" />
+            
+              </mat-form-field>
+              <button mat-raised-button color="primary" (click)="saveTotalStage()" >Save Stage</button>
+            </div>
+          </mat-card-content>
+        </mat-card>
       </div>
     </div>
   </div>
